@@ -2,9 +2,6 @@ package fr.cedriccreusot.dataadapter.cache
 
 import android.content.Context
 import java.io.*
-import java.lang.reflect.ParameterizedType
-import kotlin.reflect.KClass
-import kotlin.reflect.typeOf
 
 class FileSystemCache(private val context: Context) : Cache {
 

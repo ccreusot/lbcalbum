@@ -42,7 +42,6 @@ android {
         unitTests.all {
             useJUnitPlatform()
         }
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 }
 

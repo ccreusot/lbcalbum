@@ -13,7 +13,7 @@ import java.util.*
 @RunWith(AndroidJUnit4::class)
 class FileSystemCacheTest {
 
-    lateinit var instrumentationContext: Context
+    private lateinit var instrumentationContext: Context
 
     @Before
     fun setUp() {
