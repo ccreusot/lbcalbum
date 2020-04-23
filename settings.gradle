@@ -1,0 +1,5 @@
+rootProject.name='LBCAlbum'
+include ':app'
+include ':domain'
+include ':data-adapter'
+include ':presentation'
