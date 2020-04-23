@@ -9,10 +9,15 @@ import fr.cedriccreusot.domain.repositories.GetAlbumsException
 
 class AlbumsRepositoryAdapter(
     private val service: AlbumsService,
-    private val cache: Cache<List<Album>>
+    private val cache: Cache
 ) : AlbumsRepository {
+
+    companion object {
+        const val ALBUMS_CACHE = "albums"
+    }
+
     override fun get(): List<Album> {
-        cache.get()?.let {
+        cache.get<List<Album>>(ALBUMS_CACHE)?.let {
             return it
         }
 
@@ -28,7 +33,7 @@ class AlbumsRepositoryAdapter(
             return albumMap.map {
                 Album(it.key.toString(), it.value)
             }.also {
-                cache.save(it)
+                cache.save(ALBUMS_CACHE, it)
             }
         }.exceptionOrNull()?.let {
             throw GetAlbumsException(it.message)

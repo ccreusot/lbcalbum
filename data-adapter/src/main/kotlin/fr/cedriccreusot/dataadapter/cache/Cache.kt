@@ -1,6 +1,9 @@
 package fr.cedriccreusot.dataadapter.cache
 
-interface Cache<T> {
-    fun get(): T?
-    fun save(value: T)
+import kotlin.reflect.KClass
+
+interface Cache {
+    fun <T: Any> get(cacheName: String): T?
+    fun save(cacheName: String, value: Any)
+
 }

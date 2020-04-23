@@ -25,16 +25,16 @@ class AlbumsRepositoryAdapterTest {
     )
     fun `getting the tracks when the service throw an IOException`() {
         val service = AlbumsServiceMocks.createServiceThatFail()
-        val cache = mock<Cache<List<Album>>>()
+        val cache = mock<Cache>()
         val repository = AlbumsRepositoryAdapter(service, cache)
 
-        given(cache.get()).willReturn(null)
+        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)).willReturn(null)
 
         val result = runCatching {
             repository.get()
         }
 
-        verify(cache).get()
+        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)
         assertThat(result.exceptionOrNull()).isNotNull()
         assertThat(result.exceptionOrNull()).isInstanceOf(GetAlbumsException::class.java)
     }
@@ -51,16 +51,16 @@ class AlbumsRepositoryAdapterTest {
     )
     fun `getting the tracks when the service is working`() {
         val service = AlbumsServiceMocks.createServiceWithResponse()
-        val cache = mock<Cache<List<Album>>>()
+        val cache = mock<Cache>()
         val repository = AlbumsRepositoryAdapter(service, cache)
         val expectedList = createExpectedAlbumList()
 
-        given(cache.get()).willReturn(null)
+        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)).willReturn(null)
 
         val result = repository.get()
 
-        verify(cache).get()
-        verify(cache).save(expectedList)
+        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)
+        verify(cache).save(AlbumsRepositoryAdapter.ALBUMS_CACHE, expectedList)
         assertThat(result).isNotNull()
         assertThat(result).isNotEmpty()
         assertThat(result).isEqualTo(expectedList)
@@ -76,15 +76,15 @@ class AlbumsRepositoryAdapterTest {
         // Since we can't verify the call on the service, create the one that fail
         // If it's called then the test will fail.
         val service = AlbumsServiceMocks.createServiceThatFail()
-        val cache = mock<Cache<List<Album>>>()
+        val cache = mock<Cache>()
         val repository = AlbumsRepositoryAdapter(service, cache)
         val expectedList = createExpectedAlbumList()
 
-        given(cache.get()).willReturn(expectedList)
+        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)).willReturn(expectedList)
 
         val result = repository.get()
 
-        verify(cache).get()
+        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)
         verifyNoMoreInteractions(cache)
         assertThat(result).isNotNull()
         assertThat(result).isNotEmpty()
