@@ -1,13 +1,21 @@
 package fr.cedriccreusot.dataadapter.repositories
 
+import fr.cedriccreusot.dataadapter.cache.Cache
 import fr.cedriccreusot.dataadapter.retrofit.AlbumsService
 import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.entities.Track
 import fr.cedriccreusot.domain.repositories.AlbumsRepository
 import fr.cedriccreusot.domain.repositories.GetAlbumsException
 
-class AlbumsRepositoryAdapter(private val service: AlbumsService) : AlbumsRepository {
+class AlbumsRepositoryAdapter(
+    private val service: AlbumsService,
+    private val cache: Cache<List<Album>>
+) : AlbumsRepository {
     override fun get(): List<Album> {
+        cache.get()?.let {
+            return it
+        }
+
         runCatching {
             val response = service.getTracks().execute()
             val albumMap = hashMapOf<Int, MutableList<Track>>()
@@ -19,6 +27,8 @@ class AlbumsRepositoryAdapter(private val service: AlbumsService) : AlbumsReposi
             }
             return albumMap.map {
                 Album(it.key.toString(), it.value)
+            }.also {
+                cache.save(it)
             }
         }.exceptionOrNull()?.let {
             throw GetAlbumsException(it.message)
