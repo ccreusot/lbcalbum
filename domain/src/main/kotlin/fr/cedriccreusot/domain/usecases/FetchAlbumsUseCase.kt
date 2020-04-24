@@ -16,10 +16,11 @@ interface FetchAlbumsUseCase {
 
 class FetchAlbumsException(override val message: String? = null) : Exception()
 
-internal class FetchAlbumsUseCaseImpl(private val repository: AlbumsRepository) : FetchAlbumsUseCase {
+internal class FetchAlbumsUseCaseImpl(private val repository: AlbumsRepository) :
+    FetchAlbumsUseCase {
     override fun invoke(): List<Album> {
-        repository.get().runCatching {
-            return this
+        runCatching() {
+            return repository.get()
         }.exceptionOrNull()?.let {
             throw FetchAlbumsException(it.message)
         }

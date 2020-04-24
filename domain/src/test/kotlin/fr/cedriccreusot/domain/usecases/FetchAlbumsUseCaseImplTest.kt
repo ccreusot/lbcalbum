@@ -31,7 +31,7 @@ class FetchAlbumsUseCaseImplTest {
 
         verify(repository).get()
         assertThat(result.exceptionOrNull()).isNotNull()
-        assertThat(result.exceptionOrNull()).isInstanceOf(GetAlbumsException::class.java)
+        assertThat(result.exceptionOrNull()).isInstanceOf(FetchAlbumsException::class.java)
         assertThat(result.exceptionOrNull()?.message).isEqualTo(error)
     }
 
