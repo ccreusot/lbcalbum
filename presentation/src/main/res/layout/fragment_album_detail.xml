@@ -2,10 +2,11 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
         <variable
             name="viewModel"
-            type="fr.cedriccreusot.presentation.list.viewmodels.AlbumListViewModel" />
+            type="fr.cedriccreusot.presentation.detail.viewmodels.TrackListViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,9 +31,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
-                app:albums="@{viewModel.albums}"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:tracks="@{viewModel.tracks}"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"

@@ -1,8 +1,9 @@
 package fr.cedriccreusot.presentation.list.viewmodels
 
 import fr.cedriccreusot.domain.entities.Album
+import fr.cedriccreusot.presentation.routes.Router
 
-data class AlbumViewModel(private val album: Album) {
+data class AlbumViewModel(private val album: Album, private val router: Router) {
     val hasFirstThumbnail: Boolean = album.tracks.isNotEmpty()
     val firstThumbnail: String = if (hasFirstThumbnail) album.tracks[0].thumbnail else ""
 
@@ -14,4 +15,8 @@ data class AlbumViewModel(private val album: Album) {
 
     val hasTrackCount: Boolean = album.tracks.size - 3 > 0
     val trackCount: String = if (hasTrackCount) "+${album.tracks.size - 3}" else ""
+
+    fun openDetail() {
+        router.routeToDetail(album.id)
+    }
 }

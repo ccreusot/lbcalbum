@@ -1,4 +1,4 @@
-package fr.cedriccreusot.presentation.list.viewmodels
+package fr.cedriccreusot.presentation.detail.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
@@ -7,11 +7,9 @@ import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.entities.Track
-import fr.cedriccreusot.domain.usecases.FetchAlbumsException
-import fr.cedriccreusot.domain.usecases.FetchAlbumsUseCase
-import fr.cedriccreusot.presentation.routes.Router
+import fr.cedriccreusot.domain.usecases.FetchTracksException
+import fr.cedriccreusot.domain.usecases.FetchTracksForAlbumUseCase
 import fr.cedriccreusot.presentation.utils.CoroutinesTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Rule
@@ -19,8 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AlbumListViewModelTest {
-
+class TrackListViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -31,22 +28,21 @@ class AlbumListViewModelTest {
     @Test
     fun testWhenUseCaseThrowingAnException() {
         val error = "An error occurred"
-        val useCase = mock<FetchAlbumsUseCase>()
-        val router = mock<Router>()
+        val useCase = mock<FetchTracksForAlbumUseCase>()
         val loadingObserver = mock<Observer<Boolean>>()
         val hasErrorObserver = mock<Observer<Boolean>>()
         val errorObserver = mock<Observer<String>>()
-        val albumListObserver = mock<Observer<List<AlbumViewModel>>>()
+        val trackListObserver = mock<Observer<List<TrackViewModel>>>()
 
-        given(useCase.invoke()).willThrow(FetchAlbumsException(error))
+        given(useCase.invoke("albumId")).willThrow(FetchTracksException(error))
 
-        val viewModel = AlbumListViewModel(useCase, router)
+        val viewModel = TrackListViewModel(useCase, "albumId")
         viewModel.isLoading.observeForever(loadingObserver)
         viewModel.hasError.observeForever(hasErrorObserver)
         viewModel.error.observeForever(errorObserver)
-        viewModel.albums.observeForever(albumListObserver)
+        viewModel.tracks.observeForever(trackListObserver)
 
-        verify(albumListObserver).onChanged(emptyList())
+        verify(trackListObserver).onChanged(emptyList())
         verify(loadingObserver).onChanged(true)
         verify(hasErrorObserver).onChanged(true)
         verify(errorObserver).onChanged(error)
@@ -54,33 +50,28 @@ class AlbumListViewModelTest {
     }
 
     @Test
-    fun testWhenUseCaseReturnTheAlbums() {
-        val useCase = mock<FetchAlbumsUseCase>()
-        val router = mock<Router>()
+    fun testWhenUseCaseReturnTheTracks() {
+        val useCase = mock<FetchTracksForAlbumUseCase>()
         val loadingObserver = mock<Observer<Boolean>>()
         val errorObserver = mock<Observer<String>>()
         val hasErrorObserver = mock<Observer<Boolean>>()
-        val albumListObserver = mock<Observer<List<AlbumViewModel>>>()
-        val albums = listOf(
-            Album(
-                "1", listOf(
-                    Track("1", "title", "full", "thumbnail")
-                )
-            )
+        val albumListObserver = mock<Observer<List<TrackViewModel>>>()
+        val tracks = listOf(
+            Track("1", "title", "full", "thumbnail")
         )
-        val expectedList = albums.map {
-            AlbumViewModel(it, router)
+        val expectedList = tracks.map {
+            TrackViewModel(it)
         }
 
-        given(useCase.invoke()).willReturn(
-            albums
+        given(useCase.invoke("albumId")).willReturn(
+            tracks
         )
 
-        val viewModel = AlbumListViewModel(useCase, router)
+        val viewModel = TrackListViewModel(useCase, "albumId")
         viewModel.isLoading.observeForever(loadingObserver)
         viewModel.hasError.observeForever(hasErrorObserver)
         viewModel.error.observeForever(errorObserver)
-        viewModel.albums.observeForever(albumListObserver)
+        viewModel.tracks.observeForever(albumListObserver)
 
         verify(albumListObserver).onChanged(emptyList())
         verify(loadingObserver).onChanged(true)

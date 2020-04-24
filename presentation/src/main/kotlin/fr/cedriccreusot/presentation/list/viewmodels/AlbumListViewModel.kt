@@ -5,11 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.cedriccreusot.domain.usecases.FetchAlbumsUseCase
+import fr.cedriccreusot.presentation.extensions.postValue
+import fr.cedriccreusot.presentation.routes.Router
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AlbumListViewModel(private val useCase: FetchAlbumsUseCase) : ViewModel() {
+class AlbumListViewModel(private val useCase: FetchAlbumsUseCase, private val router: Router) : ViewModel() {
 
     val isLoading : LiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
@@ -37,7 +39,7 @@ class AlbumListViewModel(private val useCase: FetchAlbumsUseCase) : ViewModel() 
                 runCatching {
                     val albumList = useCase.invoke()
                     albums.postValue(albumList.map { album ->
-                        AlbumViewModel(album)
+                        AlbumViewModel(album, router)
                     })
                 }.exceptionOrNull()?.let {
                     hasError.postValue(true)
@@ -46,9 +48,5 @@ class AlbumListViewModel(private val useCase: FetchAlbumsUseCase) : ViewModel() 
             }
             isLoading.postValue(false)
         }
-    }
-
-    private fun <T : Any> LiveData<T>.postValue(value: T) {
-        (this as MutableLiveData<T>).postValue(value)
     }
 }

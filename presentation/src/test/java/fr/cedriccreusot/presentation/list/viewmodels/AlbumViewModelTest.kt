@@ -1,8 +1,11 @@
 package fr.cedriccreusot.presentation.list.viewmodels
 
 import com.google.common.truth.Truth.assertThat
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.entities.Track
+import fr.cedriccreusot.presentation.routes.Router
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -17,12 +20,14 @@ class AlbumViewModelTest {
     """
     )
     internal fun firstThumbnailNoTrack() {
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
                 listOf(
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasFirstThumbnail).isFalse()
@@ -39,13 +44,15 @@ class AlbumViewModelTest {
     )
     internal fun firstThumbnailIfItExist() {
         val thumbnail1 = "thumbnail"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
                 listOf(
                     Track("1", "title", "url", thumbnail1)
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasFirstThumbnail).isTrue()
@@ -63,13 +70,15 @@ class AlbumViewModelTest {
     )
     internal fun secondThumbnailNoTrack() {
         val thumbnail1 = "thumbnail"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
                 listOf(
                     Track("1", "title", "url", thumbnail1)
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasSecondThumbnail).isFalse()
@@ -87,6 +96,7 @@ class AlbumViewModelTest {
     internal fun secondThumbnailIfItExist() {
         val thumbnail1 = "thumbnail"
         val thumbnail2 = "thumbnail2"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
@@ -95,7 +105,8 @@ class AlbumViewModelTest {
                     Track("1", "title", "url", thumbnail2)
 
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasSecondThumbnail).isTrue()
@@ -114,6 +125,7 @@ class AlbumViewModelTest {
     internal fun thirdThumbnailNoTrack() {
         val thumbnail1 = "thumbnail"
         val thumbnail2 = "thumbnail2"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
@@ -121,7 +133,8 @@ class AlbumViewModelTest {
                     Track("1", "title", "url", thumbnail1),
                     Track("1", "title", "url", thumbnail2)
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasThirdThumbnail).isFalse()
@@ -140,6 +153,7 @@ class AlbumViewModelTest {
         val thumbnail1 = "thumbnail"
         val thumbnail2 = "thumbnail2"
         val thumbnail3 = "thumbnail3"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
@@ -149,7 +163,8 @@ class AlbumViewModelTest {
                     Track("1", "title", "url", thumbnail3)
 
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasThirdThumbnail).isTrue()
@@ -170,6 +185,7 @@ class AlbumViewModelTest {
         val thumbnail1 = "thumbnail"
         val thumbnail2 = "thumbnail2"
         val thumbnail3 = "thumbnail3"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
@@ -179,7 +195,8 @@ class AlbumViewModelTest {
                     Track("1", "title", "url", thumbnail3)
 
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasTrackCount).isFalse()
@@ -199,6 +216,7 @@ class AlbumViewModelTest {
         val thumbnail1 = "thumbnail"
         val thumbnail2 = "thumbnail2"
         val thumbnail3 = "thumbnail3"
+        val router = mock<Router>()
         val albumViewModel = AlbumViewModel(
             Album(
                 "1",
@@ -209,10 +227,24 @@ class AlbumViewModelTest {
                     Track("1", "title", "url", "thumbnail")
 
                 )
-            )
+            ),
+            router
         )
 
         assertThat(albumViewModel.hasTrackCount).isTrue()
         assertThat(albumViewModel.trackCount).isEqualTo("+1")
+    }
+
+    @Test
+    internal fun openAlbumDetail() {
+        val router = mock<Router>()
+        val albumViewModel = AlbumViewModel(
+            Album("1", emptyList()),
+            router
+        )
+
+        albumViewModel.openDetail()
+
+        verify(router).routeToDetail("1")
     }
 }
