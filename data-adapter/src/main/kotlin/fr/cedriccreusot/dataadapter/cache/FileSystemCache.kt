@@ -20,7 +20,9 @@ class FileSystemCache(private val context: Context) : Cache {
         if (!file.exists()) {
             return null
         }
-        return gson.fromJson(FileReader(file), typeOf)
+        return FileReader(file).use {
+            gson.fromJson(it, typeOf)
+        }
     }
 
     override fun save(cacheName: String, value: Any) {
