@@ -1,12 +1,18 @@
 package fr.cedriccreusot.dataadapter.cache
 
 import android.content.Context
-import java.io.*
+import com.google.gson.GsonBuilder
+import java.io.File
+import java.io.FileReader
+import java.io.FileWriter
+import java.lang.reflect.Type
 
 class FileSystemCache(private val context: Context) : Cache {
 
+    private val gson =  GsonBuilder().setLenient().create()
+
     @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> get(cacheName: String): T? {
+    override fun <T : Any> get(cacheName: String, typeOf: Type): T? {
 
         val absolutePath = context.cacheDir.absolutePath
         val file = File("$absolutePath/$cacheName")
@@ -14,18 +20,17 @@ class FileSystemCache(private val context: Context) : Cache {
         if (!file.exists()) {
             return null
         }
-        return ObjectInputStream(FileInputStream(file)).use {
-            val readObject = it.readObject()
-            readObject as T
-        }
+        return gson.fromJson(FileReader(file), typeOf)
     }
 
     override fun save(cacheName: String, value: Any) {
         val absolutePath = context.cacheDir.absolutePath
         val file = File("$absolutePath/$cacheName")
         if (!file.exists()) {
-            ObjectOutputStream(FileOutputStream(file)).use {
-                it.writeObject(value)
+            val jsonValue = gson.toJson(value)
+
+            FileWriter(file).use {
+                it.write(jsonValue)
             }
         }
     }

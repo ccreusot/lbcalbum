@@ -1,6 +1,7 @@
 package fr.cedriccreusot.dataadapter.repositories
 
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.reflect.TypeToken
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -28,13 +29,14 @@ class AlbumsRepositoryAdapterTest {
         val cache = mock<Cache>()
         val repository = AlbumsRepositoryAdapter(service, cache)
 
-        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)).willReturn(null)
+        val type = object: TypeToken<List<Album>>() {}.type
+        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)).willReturn(null)
 
         val result = runCatching {
             repository.get()
         }
 
-        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)
+        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)
         assertThat(result.exceptionOrNull()).isNotNull()
         assertThat(result.exceptionOrNull()).isInstanceOf(GetAlbumsException::class.java)
     }
@@ -55,11 +57,12 @@ class AlbumsRepositoryAdapterTest {
         val repository = AlbumsRepositoryAdapter(service, cache)
         val expectedList = createExpectedAlbumList()
 
-        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)).willReturn(null)
+        val type = object: TypeToken<List<Album>>() {}.type
+        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)).willReturn(null)
 
         val result = repository.get()
 
-        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)
+        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)
         verify(cache).save(AlbumsRepositoryAdapter.ALBUMS_CACHE, expectedList)
         assertThat(result).isNotNull()
         assertThat(result).isNotEmpty()
@@ -80,11 +83,12 @@ class AlbumsRepositoryAdapterTest {
         val repository = AlbumsRepositoryAdapter(service, cache)
         val expectedList = createExpectedAlbumList()
 
-        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)).willReturn(expectedList)
+        val type = object: TypeToken<List<Album>>() {}.type
+        given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)).willReturn(expectedList)
 
         val result = repository.get()
 
-        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE)
+        verify(cache).get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)
         verifyNoMoreInteractions(cache)
         assertThat(result).isNotNull()
         assertThat(result).isNotEmpty()

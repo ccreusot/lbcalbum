@@ -1,5 +1,6 @@
 package fr.cedriccreusot.dataadapter.repositories
 
+import com.google.gson.reflect.TypeToken
 import fr.cedriccreusot.dataadapter.cache.Cache
 import fr.cedriccreusot.dataadapter.retrofit.AlbumsService
 import fr.cedriccreusot.domain.entities.Album
@@ -17,7 +18,8 @@ class AlbumsRepositoryAdapter(
     }
 
     override fun get(): List<Album> {
-        cache.get<List<Album>>(ALBUMS_CACHE)?.let {
+        val type = object : TypeToken<List<Album>>() {}.type
+        cache.get<List<Album>>(ALBUMS_CACHE, type)?.let {
             return it
         }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.reflect.TypeToken
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,14 +19,15 @@ class FileSystemCacheTest {
     @Before
     fun setUp() {
         instrumentationContext = InstrumentationRegistry.getInstrumentation().context
+        instrumentationContext.cacheDir.deleteRecursively()
     }
 
     @Test
     fun testSaveFileSystemCache() {
-        val randomString = UUID.randomUUID().toString()
+        val randomObject = ObjectForTest()
         val fileSystemCache = FileSystemCache(instrumentationContext)
 
-        fileSystemCache.save("cacheTest", randomString)
+        fileSystemCache.save("cacheTest", randomObject)
 
         val absolutePath = instrumentationContext.cacheDir.absolutePath
         assertThat(File("$absolutePath/cacheTest").exists()).isTrue()
@@ -35,21 +37,24 @@ class FileSystemCacheTest {
     fun testGetObjectFromFileSystemCache() {
         val fileSystemCache = FileSystemCache(instrumentationContext)
 
-        val result = fileSystemCache.get<String>("cacheTest")
+        val type = object: TypeToken<ObjectForTest>() {}.type
+        val result = fileSystemCache.get<ObjectForTest>("cacheTest", type)
 
         assertThat(result).isNull()
     }
 
     @Test
     fun testGetObjectFromFileSystemCacheAfterSaving() {
-        val randomString = UUID.randomUUID().toString()
+        val randomObject = ObjectForTest()
         val fileSystemCache = FileSystemCache(instrumentationContext)
 
-        fileSystemCache.save("cacheTest", randomString)
-        val result = fileSystemCache.get<String>("cacheTest")
+        fileSystemCache.save("cacheTest", randomObject)
+        val type = object: TypeToken<ObjectForTest>() {}.type
+        val result = fileSystemCache.get<ObjectForTest>("cacheTest", type)
 
         assertThat(result).isNotNull()
-        assertThat(result).isEqualTo(randomString)
+        assertThat(result).isEqualTo(randomObject)
     }
 
+    data class ObjectForTest(val value: String = UUID.randomUUID().toString())
 }
