@@ -15,6 +15,10 @@ class AlbumListViewModel(private val useCase: FetchAlbumsUseCase) : ViewModel() 
         MutableLiveData<Boolean>()
     }
 
+    val hasError : LiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+
     val error : LiveData<String> by lazy {
         MutableLiveData<String>()
     }
@@ -36,6 +40,7 @@ class AlbumListViewModel(private val useCase: FetchAlbumsUseCase) : ViewModel() 
                         AlbumViewModel(album)
                     })
                 }.exceptionOrNull()?.let {
+                    hasError.postValue(true)
                     error.postValue(it.message ?: "")
                 }
             }

@@ -82,6 +82,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
+    implementation "com.squareup.picasso:picasso:$picasso_version"
+
     testImplementation "com.squareup.retrofit2:retrofit-mock:$retrofit_version"
     testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
     testImplementation "com.google.truth:truth:$truth_version"

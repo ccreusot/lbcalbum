@@ -32,6 +32,7 @@ class AlbumListViewModelTest {
         val error = "An error occurred"
         val useCase = mock<FetchAlbumsUseCase>()
         val loadingObserver = mock<Observer<Boolean>>()
+        val hasErrorObserver = mock<Observer<Boolean>>()
         val errorObserver = mock<Observer<String>>()
         val albumListObserver = mock<Observer<List<AlbumViewModel>>>()
 
@@ -39,13 +40,15 @@ class AlbumListViewModelTest {
 
         val viewModel = AlbumListViewModel(useCase)
         viewModel.isLoading.observeForever(loadingObserver)
+        viewModel.hasError.observeForever(hasErrorObserver)
         viewModel.error.observeForever(errorObserver)
         viewModel.albums.observeForever(albumListObserver)
 
-        verify(loadingObserver).onChanged(true)
-        verify(loadingObserver).onChanged(false)
-        verify(errorObserver).onChanged(error)
         verify(albumListObserver).onChanged(emptyList())
+        verify(loadingObserver).onChanged(true)
+        verify(hasErrorObserver).onChanged(true)
+        verify(errorObserver).onChanged(error)
+        verify(loadingObserver).onChanged(false)
     }
 
     @Test
@@ -53,6 +56,7 @@ class AlbumListViewModelTest {
         val useCase = mock<FetchAlbumsUseCase>()
         val loadingObserver = mock<Observer<Boolean>>()
         val errorObserver = mock<Observer<String>>()
+        val hasErrorObserver = mock<Observer<Boolean>>()
         val albumListObserver = mock<Observer<List<AlbumViewModel>>>()
         val albums = listOf(
             Album(
@@ -71,13 +75,15 @@ class AlbumListViewModelTest {
 
         val viewModel = AlbumListViewModel(useCase)
         viewModel.isLoading.observeForever(loadingObserver)
+        viewModel.hasError.observeForever(hasErrorObserver)
         viewModel.error.observeForever(errorObserver)
         viewModel.albums.observeForever(albumListObserver)
 
+        verify(albumListObserver).onChanged(emptyList())
         verify(loadingObserver).onChanged(true)
+        verify(albumListObserver).onChanged(expectedList)
         verify(loadingObserver).onChanged(false)
         verifyZeroInteractions(errorObserver)
-        verify(albumListObserver).onChanged(emptyList())
-        verify(albumListObserver).onChanged(expectedList)
+        verifyZeroInteractions(hasErrorObserver)
     }
 }
