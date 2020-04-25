@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.cedriccreusot.domain.usecases.FetchAlbumsUseCase
 import fr.cedriccreusot.presentation.extensions.postValue
-import fr.cedriccreusot.presentation.routes.Router
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AlbumListViewModel(private val useCase: FetchAlbumsUseCase, private val router: Router) : ViewModel() {
+class AlbumListViewModel(private val useCase: FetchAlbumsUseCase) : ViewModel() {
 
     val isLoading : LiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
@@ -39,7 +38,7 @@ class AlbumListViewModel(private val useCase: FetchAlbumsUseCase, private val ro
                 runCatching {
                     val albumList = useCase.invoke()
                     albums.postValue(albumList.map { album ->
-                        AlbumViewModel(album, router)
+                        AlbumViewModel(album)
                     })
                 }.exceptionOrNull()?.let {
                     hasError.postValue(true)

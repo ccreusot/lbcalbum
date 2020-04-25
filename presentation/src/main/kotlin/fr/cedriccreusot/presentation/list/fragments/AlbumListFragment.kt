@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import fr.cedriccreusot.presentation.databinding.FragmentAlbumListBinding
 import fr.cedriccreusot.presentation.list.viewmodels.AlbumListViewModel
+import fr.cedriccreusot.presentation.routes.Router
 import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class AlbumListFragment : Fragment() {
 
-    private val albumListViewModel: AlbumListViewModel by viewModel { parametersOf(this.findNavController()) }
+    private val albumListViewModel: AlbumListViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,6 +22,7 @@ class AlbumListFragment : Fragment() {
     ): View? {
         return FragmentAlbumListBinding.inflate(inflater, container, false).apply {
             viewModel = albumListViewModel
+            router = Router.create(findNavController())
             lifecycleOwner = this@AlbumListFragment
         }.root
     }

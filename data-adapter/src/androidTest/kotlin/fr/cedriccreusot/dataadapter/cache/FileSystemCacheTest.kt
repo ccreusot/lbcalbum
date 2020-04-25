@@ -16,18 +16,21 @@ class FileSystemCacheTest {
 
     private lateinit var instrumentationContext: Context
 
+    private lateinit var cache: Cache
+
     @Before
     fun setUp() {
         instrumentationContext = InstrumentationRegistry.getInstrumentation().context
         instrumentationContext.cacheDir.deleteRecursively()
+
+        cache = FileSystemCache(instrumentationContext)
     }
 
     @Test
     fun testSaveFileSystemCache() {
         val randomObject = ObjectForTest()
-        val fileSystemCache = FileSystemCache(instrumentationContext)
 
-        fileSystemCache.save("cacheTest", randomObject)
+        cache.save("cacheTest", randomObject)
 
         val absolutePath = instrumentationContext.cacheDir.absolutePath
         assertThat(File("$absolutePath/cacheTest").exists()).isTrue()
@@ -35,10 +38,8 @@ class FileSystemCacheTest {
 
     @Test
     fun testGetObjectFromFileSystemCache() {
-        val fileSystemCache = FileSystemCache(instrumentationContext)
-
         val type = object: TypeToken<ObjectForTest>() {}.type
-        val result = fileSystemCache.get<ObjectForTest>("cacheTest", type)
+        val result = cache.get<ObjectForTest>("cacheTest", type)
 
         assertThat(result).isNull()
     }
@@ -46,11 +47,10 @@ class FileSystemCacheTest {
     @Test
     fun testGetObjectFromFileSystemCacheAfterSaving() {
         val randomObject = ObjectForTest()
-        val fileSystemCache = FileSystemCache(instrumentationContext)
 
-        fileSystemCache.save("cacheTest", randomObject)
+        cache.save("cacheTest", randomObject)
         val type = object: TypeToken<ObjectForTest>() {}.type
-        val result = fileSystemCache.get<ObjectForTest>("cacheTest", type)
+        val result = cache.get<ObjectForTest>("cacheTest", type)
 
         assertThat(result).isNotNull()
         assertThat(result).isEqualTo(randomObject)

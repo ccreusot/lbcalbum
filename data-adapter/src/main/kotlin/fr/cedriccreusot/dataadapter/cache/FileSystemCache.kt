@@ -11,7 +11,6 @@ class FileSystemCache(private val context: Context) : Cache {
 
     private val gson =  GsonBuilder().setLenient().create()
 
-    @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(cacheName: String, typeOf: Type): T? {
 
         val absolutePath = context.cacheDir.absolutePath

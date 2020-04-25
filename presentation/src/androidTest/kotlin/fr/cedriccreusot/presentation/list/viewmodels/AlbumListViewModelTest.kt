@@ -11,9 +11,9 @@ import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.entities.Track
 import fr.cedriccreusot.domain.usecases.FetchAlbumsException
 import fr.cedriccreusot.domain.usecases.FetchAlbumsUseCase
-import fr.cedriccreusot.presentation.routes.Router
 import fr.cedriccreusot.presentation.utils.CoroutinesTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,19 +28,29 @@ class AlbumListViewModelTest {
     @ExperimentalCoroutinesApi
     val coroutinesTestRule = CoroutinesTestRule()
 
+    private lateinit var useCase: FetchAlbumsUseCase
+    private lateinit var loadingObserver: Observer<Boolean>
+    private lateinit var hasErrorObserver: Observer<Boolean>
+    private lateinit var errorObserver: Observer<String>
+    private lateinit var albumListObserver: Observer<List<AlbumViewModel>>
+    private lateinit var viewModel: AlbumListViewModel
+
+    @Before
+    fun setUp() {
+        useCase = mock()
+        loadingObserver = mock()
+        hasErrorObserver = mock()
+        errorObserver = mock()
+        albumListObserver = mock()
+        viewModel = AlbumListViewModel(useCase)
+    }
+
     @Test
     fun testWhenUseCaseThrowingAnException() {
         val error = "An error occurred"
-        val useCase = mock<FetchAlbumsUseCase>()
-        val router = mock<Router>()
-        val loadingObserver = mock<Observer<Boolean>>()
-        val hasErrorObserver = mock<Observer<Boolean>>()
-        val errorObserver = mock<Observer<String>>()
-        val albumListObserver = mock<Observer<List<AlbumViewModel>>>()
 
         given(useCase.invoke()).willThrow(FetchAlbumsException(error))
 
-        val viewModel = AlbumListViewModel(useCase, router)
         viewModel.isLoading.observeForever(loadingObserver)
         viewModel.hasError.observeForever(hasErrorObserver)
         viewModel.error.observeForever(errorObserver)
@@ -55,12 +65,6 @@ class AlbumListViewModelTest {
 
     @Test
     fun testWhenUseCaseReturnTheAlbums() {
-        val useCase = mock<FetchAlbumsUseCase>()
-        val router = mock<Router>()
-        val loadingObserver = mock<Observer<Boolean>>()
-        val errorObserver = mock<Observer<String>>()
-        val hasErrorObserver = mock<Observer<Boolean>>()
-        val albumListObserver = mock<Observer<List<AlbumViewModel>>>()
         val albums = listOf(
             Album(
                 "1", listOf(
@@ -69,14 +73,13 @@ class AlbumListViewModelTest {
             )
         )
         val expectedList = albums.map {
-            AlbumViewModel(it, router)
+            AlbumViewModel(it)
         }
 
         given(useCase.invoke()).willReturn(
             albums
         )
 
-        val viewModel = AlbumListViewModel(useCase, router)
         viewModel.isLoading.observeForever(loadingObserver)
         viewModel.hasError.observeForever(hasErrorObserver)
         viewModel.error.observeForever(errorObserver)

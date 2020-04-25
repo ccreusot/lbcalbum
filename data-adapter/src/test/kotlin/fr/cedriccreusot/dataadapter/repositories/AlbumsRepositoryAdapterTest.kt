@@ -11,10 +11,20 @@ import fr.cedriccreusot.dataadapter.mocks.AlbumsServiceMocks
 import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.entities.Track
 import fr.cedriccreusot.domain.repositories.GetAlbumsException
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 class AlbumsRepositoryAdapterTest {
+
+    private lateinit var cache: Cache
+
+
+    @BeforeEach
+    internal fun setUp() {
+        cache = mock()
+    }
+
     @Test
     @DisplayName(
         """
@@ -26,7 +36,6 @@ class AlbumsRepositoryAdapterTest {
     )
     fun `getting the tracks when the service throw an IOException`() {
         val service = AlbumsServiceMocks.createServiceThatFail()
-        val cache = mock<Cache>()
         val repository = AlbumsRepositoryAdapter(service, cache)
 
         val type = object: TypeToken<List<Album>>() {}.type
@@ -53,9 +62,8 @@ class AlbumsRepositoryAdapterTest {
     )
     fun `getting the tracks when the service is working`() {
         val service = AlbumsServiceMocks.createServiceWithResponse()
-        val cache = mock<Cache>()
-        val repository = AlbumsRepositoryAdapter(service, cache)
         val expectedList = createExpectedAlbumList()
+        val repository = AlbumsRepositoryAdapter(service, cache)
 
         val type = object: TypeToken<List<Album>>() {}.type
         given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)).willReturn(null)
@@ -79,9 +87,8 @@ class AlbumsRepositoryAdapterTest {
         // Since we can't verify the call on the service, create the one that fail
         // If it's called then the test will fail.
         val service = AlbumsServiceMocks.createServiceThatFail()
-        val cache = mock<Cache>()
-        val repository = AlbumsRepositoryAdapter(service, cache)
         val expectedList = createExpectedAlbumList()
+        val repository = AlbumsRepositoryAdapter(service, cache)
 
         val type = object: TypeToken<List<Album>>() {}.type
         given(cache.get<List<Album>>(AlbumsRepositoryAdapter.ALBUMS_CACHE, type)).willReturn(expectedList)

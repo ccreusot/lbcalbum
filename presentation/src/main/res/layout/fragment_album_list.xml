@@ -6,6 +6,9 @@
         <variable
             name="viewModel"
             type="fr.cedriccreusot.presentation.list.viewmodels.AlbumListViewModel" />
+        <variable
+            name="router"
+            type="fr.cedriccreusot.presentation.routes.Router" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,12 +30,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>
 
+            <!-- Giving an id to the recycler view to let it manage its state (like scroll position) -->
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
-                app:albums="@{viewModel.albums}"/>
+                app:albums="@{viewModel.albums}"
+                app:router="@{router}"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"

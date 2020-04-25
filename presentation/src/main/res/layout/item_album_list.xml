@@ -5,6 +5,9 @@
         <variable
             name="viewModel"
             type="fr.cedriccreusot.presentation.list.viewmodels.AlbumViewModel" />
+        <variable
+            name="router"
+            type="fr.cedriccreusot.presentation.routes.Router" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -12,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         app:cardElevation="2dp"
-        app:actionOnClick="@{viewModel::openDetail}">
+        app:actionOnClick="@{() -> viewModel.openDetail(router) }">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="192dp">

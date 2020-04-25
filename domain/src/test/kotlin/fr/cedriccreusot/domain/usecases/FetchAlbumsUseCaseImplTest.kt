@@ -7,10 +7,20 @@ import com.nhaarman.mockitokotlin2.verify
 import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.repositories.AlbumsRepository
 import fr.cedriccreusot.domain.repositories.GetAlbumsException
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 class FetchAlbumsUseCaseImplTest {
+
+    private lateinit var repository: AlbumsRepository
+    private lateinit var useCase: FetchAlbumsUseCase
+
+    @BeforeEach
+    internal fun setUp() {
+        repository = mock()
+        useCase = FetchAlbumsUseCase.create(repository)
+    }
 
     @Test
     @DisplayName("""
@@ -20,8 +30,6 @@ class FetchAlbumsUseCaseImplTest {
     """)
     fun `use case invoke should throw an exception when repository throw one`() {
         val error = "An error occurred"
-        val repository = mock<AlbumsRepository>()
-        val useCase = FetchAlbumsUseCase.create(repository)
 
         given(repository.get()).willThrow(GetAlbumsException(error))
 
@@ -47,8 +55,6 @@ class FetchAlbumsUseCaseImplTest {
             Album("2", emptyList()),
             Album("3", emptyList())
         )
-        val repository = mock<AlbumsRepository>()
-        val useCase = FetchAlbumsUseCase.create(repository)
 
         given(repository.get()).willReturn(expectedList)
 

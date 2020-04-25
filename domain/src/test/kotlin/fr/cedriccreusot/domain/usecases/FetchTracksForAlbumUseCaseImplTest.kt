@@ -9,10 +9,20 @@ import fr.cedriccreusot.domain.entities.Album
 import fr.cedriccreusot.domain.entities.Track
 import fr.cedriccreusot.domain.repositories.AlbumsRepository
 import fr.cedriccreusot.domain.repositories.GetAlbumsException
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 class FetchTracksForAlbumUseCaseImplTest {
+
+    private lateinit var repository: AlbumsRepository
+    private lateinit var useCase: FetchTracksForAlbumUseCase
+
+    @BeforeEach
+    internal fun setUp() {
+        repository = mock()
+        useCase = FetchTracksForAlbumUseCase.create(repository)
+    }
 
     @Test
     @DisplayName("""
@@ -22,8 +32,6 @@ class FetchTracksForAlbumUseCaseImplTest {
     """)
     fun `use case invoke should throw an exception when albumId is empty`() {
         val error = "Error can not have an empty Album ID"
-        val repository = mock<AlbumsRepository>()
-        val useCase = FetchTracksForAlbumUseCase.create(repository)
 
         val result = runCatching {
             useCase.invoke("")
@@ -43,8 +51,6 @@ class FetchTracksForAlbumUseCaseImplTest {
     """)
     fun `use case invoke should throw an exception when repository throw one`() {
         val error = "An error occurred"
-        val repository = mock<AlbumsRepository>()
-        val useCase = FetchTracksForAlbumUseCase.create(repository)
 
         given(repository.get()).willThrow(GetAlbumsException(error))
 
@@ -67,8 +73,6 @@ class FetchTracksForAlbumUseCaseImplTest {
     """)
     fun `use case invoke should throw an exception when album not found`() {
         val error = "Album not found"
-        val repository = mock<AlbumsRepository>()
-        val useCase = FetchTracksForAlbumUseCase.create(repository)
         val expectedList = listOf(
             Album("1", listOf(
                 Track("1", "title", "full", "thumbnail")
@@ -93,8 +97,6 @@ class FetchTracksForAlbumUseCaseImplTest {
         Then the use case should the track list associated.
     """)
     fun `use case invoke should return a track list`() {
-        val repository = mock<AlbumsRepository>()
-        val useCase = FetchTracksForAlbumUseCase.create(repository)
         val expectedList = listOf(
             Album("albumId", listOf(
                 Track("1", "title", "full", "thumbnail")
