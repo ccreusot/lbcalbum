@@ -16,6 +16,7 @@
         android:layout_height="match_parent">
 
         <ViewFlipper
+            android:id="@+id/albumListViewFlipper"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -26,13 +27,13 @@
             app:hasError="@{viewModel.hasError}">
 
             <ProgressBar
+                android:id="@+id/albumProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>
 
-            <!-- Giving an id to the recycler view to let it manage its state (like scroll position) -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/albumRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
@@ -41,6 +42,7 @@
                 app:router="@{router}"/>
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/errorTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
